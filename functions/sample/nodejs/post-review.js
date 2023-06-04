@@ -5,13 +5,13 @@ function main(params) {
     return new Promise(function (resolve, reject) {
      
       const authenticator = new IamAuthenticator({
-        apikey: "SAmgJ3CFQv5bAWgcmegScVOKgimSynX-pC4mi5y0RN-z", // TODO: Replace with your API key
+        apikey: "", 
       });
       const cloudant = CloudantV1.newInstance({
         authenticator: authenticator,
       });
       cloudant.setServiceUrl("https://7ee132cb-9734-4ac3-bd3e-a65c47e2eea7-bluemix.cloudantnosqldb.appdomain.cloud"); // TODO: Replace with your Cloudant service URL
-      // add id to review
+   
       let doc = params.review;
       doc.id = Math.floor(Math.random() * (80 - 15) + 15);
       cloudant
