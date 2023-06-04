@@ -29,12 +29,12 @@ class CarMake(models.Model):
 # - __str__ method to print a car make object
 class CarModel(models.Model):
     #constant for c_type choices
-    TYPES = (
+    Types = (
             ("SEDAN", "Sedan"), ("SUV", "SUV"), ("WAGON", "Wagon"), ("LIMOUSINE", "Limousine"), ("COUPE", "Coupe"), ("CROSSOVER", "Crossover")
         )
     make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     name = models.CharField(null=False, max_length=30)
-    c_type = models.CharField(max_length=30, choices=TYPES)
+    c_type = models.CharField(max_length=30, choices=Types)
     dealer_id = models.IntegerField()
     year = models.DateField()
 
