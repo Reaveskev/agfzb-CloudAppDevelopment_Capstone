@@ -14,21 +14,23 @@ function main(params) {
 }
 
 function getReviews(cloudant) {
-     return new Promise((resolve, reject) => {
-         cloudant.postAllDocs({ db: "reviews"})            
-             .then((result)=>{
-                  let code = 200;
-          if (result.result.rows.length == 0) {
-            code = 404;
-          }
-              resolve({statusCode: code,
-            headers: { "Content-Type": "application/json" },
-            body: result.result.rows,});
-             })
-             .catch(err => {
+    return new Promise((resolve, reject) => {
+        cloudant.postAllDocs({ db: "reviews", includeDocs: true }) 
+            .then((result) => {
+                let code = 200;
+                if (result.result.total_rows === 0) {
+                    code = 404;
+                }
+                resolve({
+                    statusCode: code,
+                    headers: { "Content-Type": "application/json" },
+                    body: result.result.rows.map(row => row.doc) 
+                });
+            })
+            .catch(err => {
                 console.log(err);
                 reject({ err: err });
-             });
-         })
- }
+            });
+    });
+}
  

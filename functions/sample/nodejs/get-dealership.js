@@ -14,23 +14,24 @@ function main(params) {
 }
 
 function getDealership(cloudant) {
-     return new Promise((resolve, reject) => {
-         cloudant.postAllDocs({ db: "dealerships", includeDocs: true})            
-             .then((result)=>{
-                   let code = 200;
-          if (result.result.rows.length == 0) {
-            code = 404;
-          }
-               resolve({statusCode: code,
-            headers: { "Content-Type": "application/json" },
-            body: result.result.rows,});
-             })
-             .catch(err => {
-                console.log(err);
-                reject({ err: err });
-             });
-         })
- }
+    return new Promise((resolve, reject) => {
+        cloudant.postAllDocs({ db: "dealerships", includeDocs: true})            
+            .then((result)=>{
+                  let code = 200;
+         if (result.result.rows.length == 0) {
+           code = 404;
+         }
+         const docs = result.result.rows.map((row) => row.doc);
+              resolve({statusCode: code,
+           headers: { "Content-Type": "application/json" },
+           body: docs,});
+            })
+            .catch(err => {
+               console.log(err);
+               reject({ err: err });
+            });
+        })
+}
  
 
  

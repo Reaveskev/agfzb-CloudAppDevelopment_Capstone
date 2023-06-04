@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarDealer, DealerReview, CarModel, CarMake
-# from .restapis import related methods
+# from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -30,20 +30,25 @@ def get_contact(request):
 # Create a `login_request` view to handle sign in request
 def login_request(request):
     context = {}
+    # url = "https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/get-dealership"
+    # dealerships = get_dealers_from_cf(url)
+    # # Concat all dealer's short name
+    # context["dealership_list"]=dealerships
     if request.method == "POST":
+        # Get username and password from request.POST dictionary
         username = request.POST['username']
-        password = request.POST['psw']
-       
+        password = request.POST['pword']
+        # Try to check if provide credential can be authenticated
         user = authenticate(username=username, password=password)
         if user is not None:
+            # If user is valid, call login method to login current user
             login(request, user)
-            # Not sure where to send them as of now
-            return redirect('djangoapp/index.html')
+            return render(request, 'djangoapp/index.html', context)
         else:
-            # Not sure where to send them as of now
+            # If not, return to login page again
+            context["message"]="Username or password is incorrect."
             return render(request, 'djangoapp/index.html', context)
     else:
-        # Not sure where to send them as of now
         return render(request, 'djangoapp/index.html', context)
 
 
@@ -51,9 +56,16 @@ def login_request(request):
 
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
+    context = {}
+    # url = "https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/get-dealership"
+    # dealerships = get_dealers_from_cf(url)
+    # Concat all dealer's short name
+    # context["dealership_list"]=dealerships
+    # Get the user object based on session id in request
     print("Log out the user `{}`".format(request.user.username))
+    # Logout user in the request
     logout(request)
-    # Not sure where to send them as of now
+    # Redirect user back to course list view
     return render(request, 'djangoapp/index.html', context)
 
 
@@ -64,10 +76,10 @@ def logout_request(request):
 def registration_request(request):
     context = {}
     if request.method == 'GET':
-        return render(request, 'onlinecourse/user_registration.html', context)
+        return render(request, 'djangoapp/registration.html', context)
     elif request.method == 'POST':
         username = request.POST['username']
-        password = request.POST['psw']
+        password = request.POST['pword']
         first_name = request.POST['firstname']
         last_name = request.POST['lastname']
         user_exist = False
@@ -81,29 +93,84 @@ def registration_request(request):
             user = User.objects.create_user(username=username, first_name=first_name, last_name=last_name,
                                             password=password)
             login(request, user)
-            return redirect("onlinecourse:popular_course_list")
+            return render(request, 'djangoapp/index.html', context)
         else:
-            return render(request, 'onlinecourse/user_registration.html', context)
+            return render(request, 'djangoapp/registration.html', context)
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
+    context = {}
     if request.method == "GET":
-        context={}
-        url = "https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/get-dealership"
-
-        # Get dealers from the URL
-        dealerships = get_dealers_from_cf(url)
-        # Concat all dealer's short name
-        context["dealership_list"]=dealerships
-        # Return a list of dealer short name
         return render(request, 'djangoapp/index.html', context)
+# def get_dealerships(request):
+#     if request.method == "GET":
+#         context={}
+#         url = "https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/get-dealership"
+
+#         # Get dealers from the URL
+#         dealerships = get_dealers_from_cf(url)
+#         # Concat all dealer's short name
+#         context["dealership_list"]=dealerships
+#         # Return a list of dealer short name
+#         return render(request, 'djangoapp/index.html', context)
 
 
-# Create a `get_dealer_details` view to render the reviews of a dealer
+# # Create a `get_dealer_details` view to render the reviews of a dealer
 # def get_dealer_details(request, dealer_id):
-# ...
+#     context={}
+#     url = "https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/get-review"
+#     # apikey="_xKRLnH-xVpGqx9u0VBB3dZUTVxhZ8JNVyxYY6ooCjB2"
+#     #print(dealer_id)
+#     # Get dealers from the URL
+#     dealer_details = get_dealer_reviews_from_cf(url,dealer_id)
+#     context["dealer_id"]=dealer_id
+#     context["reviews"]=dealer_details
+#     return render(request, 'djangoapp/dealer_details.html', context)
 
-# Create a `add_review` view to submit a review
+
+
+# # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
-# ...
+#     context = {}
+#     # If it is a GET request, just render the add_review page
+#     if request.method == 'GET':
+#         url = "https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/get-dealership"
+#         # Get dealers from the URL
+#         context = {
+#             "dealer_id": dealer_id,
+#             "dealer_name": get_dealers_from_cf(url)[dealer_id-1].full_name,
+#             "cars": CarModel.objects.all()
+#         }
+       
+#         return render(request, 'djangoapp/add_review.html', context)
+#     elif request.method == 'POST':
+#         if (request.user.is_authenticated):
+#             review = dict()
+#             review["id"]=0
+#             review["name"]=request.POST["name"]
+#             review["dealership"]=dealer_id
+#             review["review"]=request.POST["content"]
+#             if ("purchasecheck" in request.POST):
+#                 review["purchase"]=True
+#             else:
+#                 review["purchase"]=False
+#             print(request.POST["car"])
+#             if review["purchase"] == True:
+#                 car_parts=request.POST["car"].split("|")
+#                 review["purchase_date"]=request.POST["purchase_date"] 
+#                 review["car_make"]=car_parts[0]
+#                 review["car_model"]=car_parts[1]
+#                 review["car_year"]=car_parts[2]
 
+#             else:
+#                 review["purchase_date"]=None
+#                 review["car_make"]=None
+#                 review["car_model"]=None
+#                 review["car_year"]=None
+#             json_result = post_request("https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/post-review", review, dealerId=dealer_id)
+#             print(json_result)
+#             if "error" in json_result:
+#                 context["message"] = "ERROR: Review was not submitted."
+#             else:
+#                 context["message"] = "Review was submited"
+#         return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
