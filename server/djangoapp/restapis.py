@@ -77,39 +77,39 @@ def get_dealers_from_cf(url, **kwargs):
 
 def get_dealer_reviews_from_cf(url, dealer_id):
     results = []
-    json_result = get_request(url, dealerId=dealer_id)
+    json_result = get_request(url, dealer_id=dealer_id)
+    print(json_result)
     if json_result:
-        for response_body in json_result:
-            if "body" in response_body:
-                reviews = response_body["body"]
-                for review in reviews:
-                    if review["purchase"]:
-                        review_obj = DealerReview(
-                            dealership=review["dealership"],
-                            name=review["name"],
-                            purchase=review["purchase"],
-                            review=review["review"],
-                            purchase_date=review["purchase_date"],
-                            car_make=review["car_make"],
-                            car_model=review["car_model"],
-                            car_year=review["car_year"],
-                            sentiment=analyze_review_sentiments(review["review"]),
-                            id=review['id']
-                        )
-                    else:
-                        review_obj = DealerReview(
-                            dealership=review["dealership"],
-                            name=review["name"],
-                            purchase=review["purchase"],
-                            review=review["review"],
-                            purchase_date=None,
-                            car_make=None,
-                            car_model=None,
-                            car_year=None,
-                            sentiment=analyze_review_sentiments(review["review"]),
-                            id=review['id']
-                        )
-                    results.append(review_obj)
+        for review in json_result:
+            if review["purchase"]:
+                print(review)
+                # review_obj = DealerReview(
+                #     dealership=review["dealership"],
+                #     name=review["name"],
+                #     purchase=review["purchase"],
+                #     review=review["review"],
+                #     purchase_date=review["purchase_date"],
+                #     car_make=review["car_make"],
+                #     car_model=review["car_model"],
+                #     car_year=review["car_year"],
+                #     sentiment=analyze_review_sentiments(review["review"]),
+                #     id=review['id']
+                # )
+            else:
+                print(review)
+                # review_obj = DealerReview(
+                #     dealership=review["dealership"],
+                #     name=review["name"],
+                #     purchase=review["purchase"],
+                #     review=review["review"],
+                #     purchase_date=None,
+                #     car_make=None,
+                #     car_model=None,
+                #     car_year=None,
+                #     sentiment=analyze_review_sentiments(review["review"]),
+                #     id=review['id']
+                # )
+            # results.append(review_obj)
     return results
 
 
