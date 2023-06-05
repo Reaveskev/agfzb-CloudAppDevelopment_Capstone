@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarDealer, DealerReview, CarModel, CarMake
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -153,7 +153,7 @@ def add_review(request, dealer_id):
                 review["purchase"]=True
             else:
                 review["purchase"]=False
-            print(request.POST["car"])
+            # print(request.POST["car"])
             if review["purchase"] == True:
                 car_parts=request.POST["car"].split("|")
                 review["purchase_date"]=request.POST["purchase_date"] 
@@ -166,8 +166,9 @@ def add_review(request, dealer_id):
                 review["car_make"]=None
                 review["car_model"]=None
                 review["car_year"]=None
-            json_result = post_request("https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/post-review", review, dealerId=dealer_id)
-            print(json_result)
+            json_data = json.dumps(review)
+            json_result = post_request("https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/post-review", json_data, dealerId=dealer_id)
+            # print(json_result)
             if "error" in json_result:
                 context["message"] = "ERROR: Review was not submitted."
             else:
