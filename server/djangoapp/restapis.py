@@ -78,55 +78,52 @@ def get_dealers_from_cf(url, **kwargs):
 def get_dealer_reviews_from_cf(url, dealer_id):
     results = []
     json_result = get_request(url, dealer_id=dealer_id)
-    print(json_result)
     if json_result:
         for review in json_result:
-            if review["purchase"]:
-                print(review)
-                # review_obj = DealerReview(
-                #     dealership=review["dealership"],
-                #     name=review["name"],
-                #     purchase=review["purchase"],
-                #     review=review["review"],
-                #     purchase_date=review["purchase_date"],
-                #     car_make=review["car_make"],
-                #     car_model=review["car_model"],
-                #     car_year=review["car_year"],
-                #     sentiment=analyze_review_sentiments(review["review"]),
-                #     id=review['id']
-                # )
-            else:
-                print(review)
-                # review_obj = DealerReview(
-                #     dealership=review["dealership"],
-                #     name=review["name"],
-                #     purchase=review["purchase"],
-                #     review=review["review"],
-                #     purchase_date=None,
-                #     car_make=None,
-                #     car_model=None,
-                #     car_year=None,
-                #     sentiment=analyze_review_sentiments(review["review"]),
-                #     id=review['id']
-                # )
-            # results.append(review_obj)
+            if review["dealership"] == dealer_id:
+                if review["purchase"]:
+                    review_obj = DealerReview(
+                        dealership=review["dealership"],
+                        name=review["name"],
+                        purchase=review["purchase"],
+                        review=review["review"],
+                        purchase_date=review["purchase_date"],
+                        car_make=review["car_make"],
+                        car_model=review["car_model"],
+                        car_year=review["car_year"],
+                        sentiment=analyze_review_sentiments(review["review"]),
+                        id=review['id']
+                    )
+                else:
+                    review_obj = DealerReview(
+                        dealership=review["dealership"],
+                        name=review["name"],
+                        purchase=review["purchase"],
+                        review=review["review"],
+                        purchase_date=None,
+                        car_make=None,
+                        car_model=None,
+                        car_year=None,
+                        sentiment=analyze_review_sentiments(review["review"]),
+                        id=review['id']
+                    )
+                results.append(review_obj)
     return results
 
 
 
-# def analyze_review_sentiments(dealerreview, **kwargs):
-#     API_KEY="MxFCXuNdAY4i7RdB1PTx0LGspyMbNVmVOKxtpJ5XPxkz"
-#     #API_KEY="0614ccd0-1e9f-4d49-923e-e7741f963747:Q3ZX2R1b3oBEb0XebEO99rpulJ31yoY7X5GfjoQykN4RpM9eThYrrs14If0aOHtG"
-#     NLU_URL='https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/93a549ab-8f15-404e-a8ed-97f6fb8a35aa/v1/analyze?version=2020-08-01'
-#     params = json.dumps({"text": dealerreview, "features": {"sentiment": {}}})
-#     response = requests.post(NLU_URL,data=params,headers={'Content-Type':'application/json'},auth=HTTPBasicAuth("apikey", API_KEY))
+def analyze_review_sentiments(dealerreview, **kwargs):
+    API_KEY="crhi2bSpCait493IYsJsbmO0LAfECyfD2FXe9tbhrNjx"
+    NLU_URL='https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/c78eab26-8a5f-4416-a7bd-1ef61f9dc3dd'
+    params = json.dumps({"text": dealerreview, "features": {"sentiment": {}}})
+    response = requests.post(NLU_URL,data=params,headers={'Content-Type':'application/json'},auth=HTTPBasicAuth("apikey", API_KEY))
     
-#     #print(response.json())
-#     try:
-#         sentiment=response.json()['sentiment']['document']['label']
-#         return sentiment
-#     except:
-#         return "neutral"
+    #print(response.json())
+    try:
+        sentiment=response.json()['sentiment']['document']['label']
+        return sentiment
+    except:
+        return "neutral"
 
 # Create a `get_request` to make HTTP GET requests
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
