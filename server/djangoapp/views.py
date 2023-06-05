@@ -153,7 +153,6 @@ def add_review(request, dealer_id):
                 review["purchase"]=True
             else:
                 review["purchase"]=False
-            # print(request.POST["car"])
             if review["purchase"] == True:
                 car_parts=request.POST["car"].split("|")
                 review["purchase_date"]=request.POST["purchase_date"] 
@@ -168,7 +167,7 @@ def add_review(request, dealer_id):
                 review["car_year"]=None
             json_data = json.dumps(review)
             json_result = post_request("https://us-south.functions.appdomain.cloud/api/v1/web/56dd4597-36e1-4f9d-ac98-a7d0245de155/dealership-package/post-review", json_data, dealerId=dealer_id)
-            # print(json_result)
+
             if "error" in json_result:
                 context["message"] = "ERROR: Review was not submitted."
             else:

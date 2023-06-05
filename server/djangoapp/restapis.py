@@ -34,7 +34,10 @@ def post_request(url, json_payload, **kwargs):
     print(json_payload)
     print("POST from {} ".format(url))
     try:
-        response = requests.post(url, params=kwargs, json=json_payload)
+        json = {
+            "review": json_payload
+        }
+        response = requests.post(url, params=kwargs, json=json)
         status_code = response.status_code
         print("With status {} ".format(status_code))
 
@@ -42,9 +45,6 @@ def post_request(url, json_payload, **kwargs):
             json_data = response.json()
             print(json_data)
             return json_data
-        # json_data = json.loads(response.text)
-        # print(json_data)
-        # return json_data
         else:
             return {"error": "An error occurred"}
     except:
